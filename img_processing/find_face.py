@@ -1,8 +1,12 @@
 import cv2
 import mediapipe as mp
+import pandas as pd
+import numpy as np
+
 
 class FaceDetection:
-    def __init__(self, i):
+    def __init__(self, i, pg):
+        super().__init__()
         self.xmin = float()
         self.ymin = float()
         self.width = float()
@@ -11,6 +15,11 @@ class FaceDetection:
         self.x = float()
         self.y = float()
         self.z = float()
+
+        self.cnt = 0
+        self.pg = pg    #progress bar
+
+        self.faces = list()
 
         ###########
         self.cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -48,6 +57,9 @@ class FaceDetection:
 
                     if ((len(roi_results.detections) == 1) & (len(mesh_results.multi_face_landmarks) == 1)):
 
+                        self.cnt += 1
+                        self.pg.setValue(self.cnt)
+
                         for detection in roi_results.detections:
                             bboxC = detection.location_data.relative_bounding_box
                             self.xmin = bboxC.xmin
@@ -56,6 +68,7 @@ class FaceDetection:
                             self.height = bboxC.height
 
                         for faceLMS in mesh_results.multi_face_landmarks:
+                            full_mesh = list()
                             for lm in faceLMS.landmark:
                                 # img relative point
                                 x = lm.x
@@ -71,15 +84,19 @@ class FaceDetection:
                                 normal_x = rel_x / self.width
                                 normal_y = rel_y / self.height
                                 normal_z = rel_z / self.width   #use width
-                                print(normal_x, normal_y, normal_z)
+                                normal_list = [normal_x, normal_y, normal_z]
+                                full_mesh.append(normal_list)
+
+                            self.faces.append(full_mesh)
+
+
+            if self.cnt == 50:
+                break
+            #cv2.imshow("vid", img)
                                 #save
-
-
-
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-
 
 
 

@@ -2,11 +2,18 @@ import sys
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+
+import img_processing.find_face
+import database.db
 import time
 
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
+
+        # db class
+        db = database.db.Db()
+
 
         self.background_style = (
             "background-color: #282a36;"
@@ -254,7 +261,8 @@ QProgressBar::chunk {
             pass
 
     def add_btn_clicked(self):
-        self.addprogress1.setValue(80)
+        detect = img_processing.find_face.FaceDetection(0, self.addprogress1)
+        #self.addprogress1.setValue(detect.cnt)
         # opencv add user
 
 
