@@ -85,18 +85,21 @@ class FaceDetection:
                                 normal_y = rel_y / self.height
                                 normal_z = rel_z / self.width   #use width
                                 normal_list = [normal_x, normal_y, normal_z]
-                                full_mesh.append(normal_list)
+                                full_mesh.append(normal_list)   #1 face
 
-                            self.faces.append(full_mesh)
+                            self.faces.append(full_mesh)    # faces, 3d list
 
 
-            if self.cnt == 50:
+            if self.cnt == 50:  #how many faces
                 break
             #cv2.imshow("vid", img)
                                 #save
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+
+        ##
+
 
 
 
