@@ -249,6 +249,10 @@ QProgressBar::chunk {
 
     def unlock_btn_clicked(self):
         self.unlockprogress1.setValue(30)
+        detect = img_processing.find_face.FaceDetection(3, self.unlockprogress1)
+
+        self.ddbb.get_user(detect.oneface) #one face
+
         # opencv unlock
 
 
@@ -261,13 +265,16 @@ QProgressBar::chunk {
             pass
 
     def add_btn_clicked(self):
-        detect = img_processing.find_face.FaceDetection(0, self.addprogress1)
+        #detect = img_processing.find_face.FaceDetection(0, self.addprogress1)  #detect faces
+        detect = img_processing.find_face.FaceDetection(3, self.addprogress1)   #detect one face
+
         #self.addprogress1.setValue(detect.cnt)
 
 
         # add user
         stime = str(int(time.time()))
-        self.ddbb.save_user(stime, detect.faces)
+        #self.ddbb.save_user_multi(stime, detect.faces)   #save faces
+        self.ddbb.save_user1(stime, detect.oneface) #one face
 
 
 if __name__ == '__main__':

@@ -1,4 +1,8 @@
 import sqlite3
+import pandas as pd
+
+import comparison.compare
+
 
 class Db:
     def __init__(self):
@@ -9,7 +13,7 @@ class Db:
 
 
 
-    def save_user(self, table_name, data):
+    def save_user_multi(self, table_name, data):
         table_name = "u_" + table_name
         text = str()
         for i in range(468):
@@ -47,10 +51,46 @@ class Db:
         self.cur.executemany(query, face_tup)
         self.conn.commit()
 
+    def save_user1(self, table_name, data):
+        table_name = "u_" + table_name
+        text = str()
+        for i in range(468):
+            text = text + "coord_" + str(i) + " text, "
 
+        text = text[:-2]
+        query = "CREATE TABLE IF NOT EXISTS " + table_name + "(" + text + ")"
+        self.cur.execute(query)
+        self.conn.commit()
+        # add user
+        # data has one face
 
-    def get_user(self):
-        pass
+        col_name = ['x', 'y', 'z']
+        list_df = pd.DataFrame(data, columns=col_name)
+        list_df.to_sql(table_name, self.conn, if_exists='replace')
+        self.conn.commit()
+
+    def get_user(self, logger_list):
+        col_name = ['x', 'y', 'z']
+        logger_df = pd.DataFrame(logger_list, columns=col_name)
+        self.cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        table_list = self.cur.fetchall()
+
+        for table in table_list:
+            table_name = table[0]
+
+            query = "SELECT * FROM " + table_name
+            res = self.cur.execute(query)
+            face_data = res.fetchall()
+            col_name = ['index', 'x', 'y', 'z']
+            list_df = pd.DataFrame(data=face_data, columns=col_name)
+            list_df = list_df.drop(columns='index')
+            cmp = comparison.compare.Compare()
+            result = cmp.compare_user(list_df, logger_df)
+
+            if result == 1:
+                pass
+            else:
+                pass
 
     def get_password(self):
         pass
