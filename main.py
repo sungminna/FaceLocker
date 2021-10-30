@@ -3,6 +3,8 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
+import pandas as pd
+
 import img_processing.find_face
 import database.db
 import time
@@ -13,6 +15,7 @@ class MyApp(QWidget):
 
         # db class
         self.ddbb = database.db.Db()
+        self.pdb = database.db.Passdb()
 
 
         self.background_style = (
@@ -197,6 +200,47 @@ QProgressBar::chunk {
         pass
 
 
+    def password_UI(self, pass_df, table_name):
+        # data config
+        self.table_name = table_name
+        self.passwordtable_row = 5
+        df_rowcount = pass_df.shape[1]
+
+
+        ## make component
+        self.passwordtable = QTableWidget(self)
+        self.passwordtable.setRowCount(self.passwordtable_row)
+        self.passwordtable.setColumnCount(3)
+        column_header = ['site', 'id', 'password']
+        #self.passwordtable.setHorizontalHeader(column_header)
+
+        self.passwordbtn1 = QPushButton('&save')
+        self.passwordbtn1.setChecked(True)
+        self.passwordbtn1.toggle()
+
+        ## set style
+        self.passwordbtn1.setStyleSheet(self.btn_style)
+
+        ## set data
+        for i, row in pass_df.iterrows():
+            for j in range(3):
+                self.passwordtable.setItem(i, j, QTableWidgetItem(row[j]))
+
+        ## layout
+        self.passwordvbox = QVBoxLayout()
+        self.passwordvbox.addStretch(5)
+        self.passwordvbox.addWidget(self.passwordtable)
+        self.passwordvbox.addStretch(1)
+        self.passwordvbox.addWidget(self.passwordbtn1)
+        self.passwordvbox.addStretch(5)
+
+        self.vbox.addLayout(self.passwordvbox)
+
+        ## event
+        self.password_event()
+
+
+
     ## event listener
 
     def front_event(self):
@@ -215,6 +259,9 @@ QProgressBar::chunk {
     def add_event(self):
         self.addbtn1.pressed.connect(lambda: self.add_btn_clicked())
 
+    def password_event(self):
+        self.passwordbtn1.pressed.connect(lambda: self.password_btn_clicked())
+
 
 
     ## delete UI
@@ -229,12 +276,24 @@ QProgressBar::chunk {
 
         self.vbox.removeItem(self.frontvbox)
 
+    def delete_unlockUI(self):
+        self.unlockprogress1.deleteLater()
+        self.unlockbtn1.deleteLater()
+
+        self.vbox.removeItem(self.unlockvbox)
+
+
     def delete_userUI(self):
         self.userbtn1.deleteLater()
         self.userbtn2.deleteLater()
 
         self.vbox.removeItem(self.uservbox)
 
+    def delete_addUI(self):
+        self.addprogress1.deleteLater()
+        self.addbtn1.deleteLater()
+
+        self.vbox.removeItem(self.addvbox)
 
     ##event
 
@@ -251,7 +310,20 @@ QProgressBar::chunk {
         self.unlockprogress1.setValue(30)
         detect = img_processing.find_face.FaceDetection(3, self.unlockprogress1)
 
-        self.ddbb.get_user(detect.oneface) #one face
+        table_name = self.ddbb.get_user(detect.oneface) #one face
+
+
+        if table_name != 0:
+            self.delete_unlockUI()
+            pass_df, table_name = self.pdb.get_password(table_name)
+
+            self.password_UI(pass_df, table_name)
+            # show
+        else:
+            # no matching faces
+            pass
+
+
 
         # opencv unlock
 
@@ -275,6 +347,30 @@ QProgressBar::chunk {
         stime = str(int(time.time()))
         #self.ddbb.save_user_multi(stime, detect.faces)   #save faces
         self.ddbb.save_user1(stime, detect.oneface) #one face
+
+        self.pdb.add_user(stime)
+        self.delete_addUI()
+        table_name = "u_" + stime
+        pass_df, table_name = self.pdb.get_password(table_name)
+        self.password_UI(pass_df, table_name)
+
+
+
+
+    def password_btn_clicked(self):
+        # save(update) password data
+        password_list = list()
+        rowcount = self.passwordtable.rowCount()
+        for i in range(rowcount):
+            temp_list = list()
+            for j in range(3):
+                data = self.passwordtable.item(i, j)
+                if data!= None:
+                    temp_list.append(data.text())
+
+            password_list.append(temp_list)
+        self.pdb.update_password(password_list, self.table_name)
+
 
 
 if __name__ == '__main__':

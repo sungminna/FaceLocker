@@ -13,7 +13,7 @@ class Db:
 
 
 
-    def save_user_multi(self, table_name, data):
+    def save_user_multi(self, table_name, data):    #not in use
         table_name = "u_" + table_name
         text = str()
         for i in range(468):
@@ -51,13 +51,10 @@ class Db:
         self.cur.executemany(query, face_tup)
         self.conn.commit()
 
-    def save_user1(self, table_name, data):
-        table_name = "u_" + table_name
-        text = str()
-        for i in range(468):
-            text = text + "coord_" + str(i) + " text, "
+    def save_user1(self, id, data):
+        table_name = "u_" + id
+        text = "x real, y real, z real"
 
-        text = text[:-2]
         query = "CREATE TABLE IF NOT EXISTS " + table_name + "(" + text + ")"
         self.cur.execute(query)
         self.conn.commit()
@@ -88,12 +85,49 @@ class Db:
             result = cmp.compare_user(list_df, logger_df)
 
             if result == 1:
-                pass
+                print(table_name)
+                return(table_name)
             else:
-                pass
+                return(0)
 
-    def get_password(self):
-        pass
+
+
+class Passdb:
+    def __init__(self):
+        super().__init__()
+
+        self.conn = sqlite3.connect("password.db")
+        self.cur = self.conn.cursor()
+
+    def add_user(self, id):
+        table_name = "u_" + id
+
+        text = "site text, id text, pass text"
+
+        query = "CREATE TABLE IF NOT EXISTS " + table_name + "(" + text + ")"
+        self.cur.execute(query)
+        self.conn.commit()
+
+
+    def get_password(self, table_name):
+        query = "SELECT * FROM " + table_name
+        res = self.cur.execute(query)
+        pass_data = res.fetchall()
+        col_name = ['site', 'id', 'password']
+        pass_df = pd.DataFrame(data=pass_data, columns=col_name)
+        return(pass_df, table_name)
+
+    def update_password(self, pass_list, table_name):
+        col_name = ['site', 'id', 'password']
+        pass_df = pd.DataFrame(pass_list, columns=col_name)
+        print(pass_df)
+        print(table_name)
+        pass_df.to_sql(table_name, self.conn, if_exists='replace')
+        self.conn.commit()
+
+
+
 
 if __name__ == '__main__':
     dd = Db()
+    pdb = Passdb()

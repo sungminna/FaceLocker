@@ -13,10 +13,17 @@ class Compare:
         cos_sum = np.float64(0.0)
         l2_sum = np.float64(0.0)
 
+        db_piv = db_numpy[0]
+        logger_piv = logger_numpy[0]
 
-        for row in range(368):
+
+
+        for row in range(1, 368):   #exclude 0th array -> pivot
             db_row = db_numpy[row]
             logger_row = logger_numpy[row]
+
+            db_row = db_row - db_piv
+            logger_row = logger_row - logger_piv
 
             cosine_similarity = self.cos_sim(db_row, logger_row)
             cos_sum += cosine_similarity
@@ -31,7 +38,13 @@ class Compare:
         cos_sum = 0.0
         l2_sum = 0.0
         print("+++")
-        return(1)
+
+        if cosine_similarity >=0.5:
+            print("1")
+            return(1)
+        else:
+            return(0)
+
 
     def cos_sim(self, db_row, logger_row):
         return (np.dot(db_row, logger_row) / (np.linalg.norm(db_row) * np.linalg.norm(logger_row)))

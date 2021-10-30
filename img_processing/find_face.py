@@ -176,7 +176,16 @@ class FaceDetection:
         while True:
             success, img = self.cam.read()
             imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            break
+            roi_results = self.faceDetection.process(imgRGB)
+            if roi_results.detections:
+                for detection in roi_results.detections:
+                    self.mpDraw.draw_detection(img, detection)
+            cv2.imshow("vid", img)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+
 
 
     def detect_mesh(self):
@@ -192,4 +201,4 @@ class FaceDetection:
 
 
 if __name__ == '__main__':
-    fd = FaceDetection(0)
+    fd = FaceDetection(1, 0)
