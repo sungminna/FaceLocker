@@ -352,20 +352,23 @@ QProgressBar::chunk {
         detect = img_processing.find_face.FaceDetection(3, self.addprogress1)   #detect one face
 
         #self.addprogress1.setValue(detect.cnt)
+        table_name = self.ddbb.get_user(detect.oneface)
+
+        if table_name == 0:
+            # add user
+            stime = str(int(time.time()))
+            # self.ddbb.save_user_multi(stime, detect.faces)   #save faces
+            self.ddbb.save_user1(stime, detect.oneface)  # one face
+
+            self.addprogress1.setValue(100)
+
+            self.pdb.add_user(stime)
+            self.delete_addUI()
+            table_name = "u_" + stime
+            pass_df, table_name = self.pdb.get_password(table_name)
+            self.password_UI(pass_df, table_name)
 
 
-        # add user
-        stime = str(int(time.time()))
-        #self.ddbb.save_user_multi(stime, detect.faces)   #save faces
-        self.ddbb.save_user1(stime, detect.oneface) #one face
-
-        self.addprogress1.setValue(100)
-        
-        self.pdb.add_user(stime)
-        self.delete_addUI()
-        table_name = "u_" + stime
-        pass_df, table_name = self.pdb.get_password(table_name)
-        self.password_UI(pass_df, table_name)
 
 
 
