@@ -108,9 +108,13 @@ class FaceDetection:
         self.mpDraw = mp.solutions.drawing_utils
         self.faceDetection = self.mpFaceDetection.FaceDetection()
 
+        self.pg.setValue(30)
+
         self.mpFaceMesh = mp.solutions.face_mesh
         self.mpDraw = mp.solutions.drawing_utils
         self.faceMesh = self.mpFaceMesh.FaceMesh(max_num_faces=2)
+
+        self.pg.setValue(40)
 
         while True:
             success, img = self.cam.read()
@@ -126,7 +130,7 @@ class FaceDetection:
                     if ((len(roi_results.detections) == 1) & (len(mesh_results.multi_face_landmarks) == 1)):
 
                         self.cnt += 1
-                        self.pg.setValue(self.cnt * 10)
+                        self.pg.setValue(50)
 
                         for detection in roi_results.detections:
                             bboxC = detection.location_data.relative_bounding_box
@@ -134,6 +138,8 @@ class FaceDetection:
                             self.ymin = bboxC.ymin
                             self.width = bboxC.width
                             self.height = bboxC.height
+
+                        self.pg.setValue(60)
 
                         for faceLMS in mesh_results.multi_face_landmarks:
                             full_mesh = list()
@@ -156,6 +162,7 @@ class FaceDetection:
                                 full_mesh.append(normal_list)   #1 face
                                 self.oneface = full_mesh
 
+                        self.pg.setValue(90)
 
             if self.cnt >= 1:  #how many faces
                 self.cnt = 0

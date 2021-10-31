@@ -113,6 +113,7 @@ class Passdb:
         query = "SELECT * FROM " + table_name
         res = self.cur.execute(query)
         pass_data = res.fetchall()
+        print(pass_data)
         col_name = ['site', 'id', 'password']
         pass_df = pd.DataFrame(data=pass_data, columns=col_name)
         return(pass_df, table_name)
@@ -121,8 +122,7 @@ class Passdb:
         col_name = ['site', 'id', 'password']
         pass_df = pd.DataFrame(pass_list, columns=col_name)
         print(pass_df)
-        print(table_name)
-        pass_df.to_sql(table_name, self.conn, if_exists='replace')
+        pass_df.to_sql(table_name, self.conn, if_exists='replace', index=False)
         self.conn.commit()
 
 

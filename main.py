@@ -1,4 +1,5 @@
 import sys
+from PyQt6.Qt import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -54,7 +55,13 @@ QProgressBar::chunk {
     margin: 1px;
 }
 """
-
+        self.table_style = (
+            "background-color: #f8f8f2;"
+            "color: #44475a;"
+            "font-family: Arial;"
+            "font-size: 20px;"
+            "font-weight: bold;"
+        )
 
         self.initUI()
         self.frontUI()
@@ -212,7 +219,9 @@ QProgressBar::chunk {
         self.passwordtable.setRowCount(self.passwordtable_row)
         self.passwordtable.setColumnCount(3)
         column_header = ['site', 'id', 'password']
-        #self.passwordtable.setHorizontalHeader(column_header)
+        self.passwordtable.setHorizontalHeaderLabels(column_header)
+        self.passwordtable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.passwordtable.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         self.passwordbtn1 = QPushButton('&save')
         self.passwordbtn1.setChecked(True)
@@ -220,6 +229,7 @@ QProgressBar::chunk {
 
         ## set style
         self.passwordbtn1.setStyleSheet(self.btn_style)
+        self.passwordtable.setStyleSheet(self.table_style)
 
         ## set data
         for i, row in pass_df.iterrows():
@@ -307,7 +317,7 @@ QProgressBar::chunk {
             self.aboutUI()
 
     def unlock_btn_clicked(self):
-        self.unlockprogress1.setValue(30)
+        self.unlockprogress1.setValue(10)
         detect = img_processing.find_face.FaceDetection(3, self.unlockprogress1)
 
         table_name = self.ddbb.get_user(detect.oneface) #one face
@@ -316,7 +326,7 @@ QProgressBar::chunk {
         if table_name != 0:
             self.delete_unlockUI()
             pass_df, table_name = self.pdb.get_password(table_name)
-
+            self.unlockprogress1.setValue(100)
             self.password_UI(pass_df, table_name)
             # show
         else:
@@ -337,6 +347,7 @@ QProgressBar::chunk {
             pass
 
     def add_btn_clicked(self):
+        self.addprogress1.setValue(10)
         #detect = img_processing.find_face.FaceDetection(0, self.addprogress1)  #detect faces
         detect = img_processing.find_face.FaceDetection(3, self.addprogress1)   #detect one face
 
@@ -348,6 +359,8 @@ QProgressBar::chunk {
         #self.ddbb.save_user_multi(stime, detect.faces)   #save faces
         self.ddbb.save_user1(stime, detect.oneface) #one face
 
+        self.addprogress1.setValue(100)
+        
         self.pdb.add_user(stime)
         self.delete_addUI()
         table_name = "u_" + stime
