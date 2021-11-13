@@ -18,6 +18,7 @@ class MyApp(QWidget):
         self.ddbb = database.db.Db()
         self.pdb = database.db.Passdb()
 
+        self.vbox_status = None
 
         self.background_style = (
             "background-color: #282a36;"
@@ -63,7 +64,19 @@ QProgressBar::chunk {
             "font-weight: bold;"
         )
 
+        self.home_button_style = (
+            "background-color: #ff79c6;"
+            "border-radius: 15px;"
+            "color: #f8f8f2;"
+            "padding: 11px;"
+            "margin: 10px;"
+            "font-family: Arial;"
+            "font-size: 20px;"
+            "font-weight: bold;"
+        )
+
         self.initUI()
+        self.home_button_UI()
         self.frontUI()
 
 
@@ -75,6 +88,26 @@ QProgressBar::chunk {
         self.setStyleSheet(self.background_style)
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
+
+    def home_button_UI(self):
+        ## make component
+        self.home_btn1 = QPushButton('&HOME', self)
+        self.home_btn1.setChecked(True)
+        self.home_btn1.toggle()
+
+        ## set style
+        self.home_btn1.setStyleSheet(self.home_button_style)
+        self.home_btn1.setFixedWidth(100)
+
+        ## layout
+        self.home_btn_vbox = QVBoxLayout()
+        self.home_btn_vbox.addWidget(self.home_btn1)
+
+
+        ## event
+        self.home_button_event()
+
+
 
     ## UI
 
@@ -114,7 +147,12 @@ QProgressBar::chunk {
         self.frontvbox.addWidget(self.frontbtn3)
         self.frontvbox.addStretch(3)
 
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
         self.vbox.addLayout(self.frontvbox)
+        self.vbox.addStretch(10)
+
+        self.vbox_status = self.frontvbox
 
         # event
         self.front_event()
@@ -141,7 +179,14 @@ QProgressBar::chunk {
         self.unlockvbox.addWidget(self.unlockbtn1)
         self.unlockvbox.addStretch(1)
 
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
         self.vbox.addLayout(self.unlockvbox)
+        self.vbox.addStretch(10)
+
+
+        self.vbox_status = self.unlockvbox
+
 
         ## event
         self.unlock_event()
@@ -169,7 +214,15 @@ QProgressBar::chunk {
         self.uservbox.addStretch(4)
 
 
+
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
         self.vbox.addLayout(self.uservbox)
+        self.vbox.addStretch(10)
+
+
+        self.vbox_status = self.uservbox
+
 
         ## event
         self.user_event()
@@ -197,7 +250,15 @@ QProgressBar::chunk {
         self.addvbox.addWidget(self.addbtn1)
         self.addvbox.addStretch(1)
 
+
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
         self.vbox.addLayout(self.addvbox)
+        self.vbox.addStretch(10)
+
+
+        self.vbox_status = self.addvbox
+
 
         ## event
         self.add_event()
@@ -242,9 +303,16 @@ QProgressBar::chunk {
         self.passwordvbox.addWidget(self.passwordtable)
         self.passwordvbox.addStretch(1)
         self.passwordvbox.addWidget(self.passwordbtn1)
-        self.passwordvbox.addStretch(5)
+        self.passwordvbox.addStretch(1)
 
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
         self.vbox.addLayout(self.passwordvbox)
+        self.vbox.addStretch(10)
+
+
+        self.vbox_status = self.passwordvbox
+
 
         ## event
         self.password_event()
@@ -252,6 +320,10 @@ QProgressBar::chunk {
 
 
     ## event listener
+
+    def home_button_event(self):
+        self.home_btn1.pressed.connect(lambda: self.home_btn_clicked())
+
 
     def front_event(self):
         self.frontbtn1.pressed.connect(lambda: self.front_btn_clicked(1))
@@ -276,39 +348,55 @@ QProgressBar::chunk {
 
     ## delete UI
 
-    def delete_frontUI(self):
-        self.frontlabel1.deleteLater()
-        self.frontlabel2.deleteLater()
-
-        self.frontbtn1.deleteLater()
-        self.frontbtn2.deleteLater()
-        self.frontbtn3.deleteLater()
-
-        self.vbox.removeItem(self.frontvbox)
-
-    def delete_unlockUI(self):
-        self.unlockprogress1.deleteLater()
-        self.unlockbtn1.deleteLater()
-
-        self.vbox.removeItem(self.unlockvbox)
+    def delete_UI(self, vbox):
 
 
-    def delete_userUI(self):
-        self.userbtn1.deleteLater()
-        self.userbtn2.deleteLater()
+        # delete widget in vbox that are in self.vbox
+        for i in reversed(range(vbox.count())):
+            if (vbox.itemAt(i).widget() != None):
+                vbox.itemAt(i).widget().deleteLater()
 
-        self.vbox.removeItem(self.uservbox)
+        #for i in reversed(range(vbox.count())):
+        #    if (vbox.itemAt(i).layout()) != None:
+        #        vbox.removeItem(vbox.itemAt(i).layout())
 
-    def delete_addUI(self):
-        self.addprogress1.deleteLater()
-        self.addbtn1.deleteLater()
+        #delete self.vbox widget
+        for i in reversed(range(self.vbox.count())):
+            if (self.vbox.itemAt(i).widget() != None):
+                self.vbox.itemAt(i).widget().deleteLater()
 
-        self.vbox.removeItem(self.addvbox)
+
+        # delete self.vbox layout
+        for i in reversed(range(self.vbox.count())):
+            if (self.vbox.itemAt(i).spacerItem()) != None:
+                self.vbox.removeItem(self.vbox.itemAt(i).spacerItem())
+
 
     ##event
 
+    def home_btn_clicked(self):
+        #delete all component and
+        print(self.vbox_status)
+        self.delete_UI(self.vbox_status)
+        #for i in reversed(range(self.vbox_status.count())):
+        #    if (self.vbox_status.itemAt(i).widget()) != None:
+        #        self.vbox_status.itemAt(i).widget().deleteLater()
+
+        #for i in reversed(range(self.vbox.count())):
+        #    if (self.vbox.itemAt(i).layout()) != None:
+        #        self.vbox.itemAt(i).layout().deleteLater()
+
+
+
+        self.frontUI()
+
+
+        #self.vbox.removeItem(self.unlockvbox)
+
+
     def front_btn_clicked(self, i):
-        self.delete_frontUI()
+        #self.delete_frontUI()
+        self.delete_UI(self.frontvbox)
         if i==1:
             self.unlockUI()
         elif i==2:
@@ -324,7 +412,8 @@ QProgressBar::chunk {
 
 
         if table_name != 0:
-            self.delete_unlockUI()
+            #self.delete_unlockUI()
+            self.delete_UI(self.unlockvbox)
             pass_df, table_name = self.pdb.get_password(table_name)
             self.unlockprogress1.setValue(100)
             self.password_UI(pass_df, table_name)
@@ -340,7 +429,8 @@ QProgressBar::chunk {
 
 
     def user_btn_clicked(self, i):
-        self.delete_userUI()
+        #self.delete_userUI()
+        self.delete_UI(self.uservbox)
         if i==1:
             self.addUI()
         else:
@@ -363,7 +453,8 @@ QProgressBar::chunk {
             self.addprogress1.setValue(100)
 
             self.pdb.add_user(stime)
-            self.delete_addUI()
+            #self.delete_addUI()
+            self.delete_UI(self.addvbox)
             table_name = "u_" + stime
             pass_df, table_name = self.pdb.get_password(table_name)
             self.password_UI(pass_df, table_name)

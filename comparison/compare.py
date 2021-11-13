@@ -35,14 +35,19 @@ class Compare:
 
         print(cos_sum / 368.0)
         print(l2_sum / 368.0)
-        cos_sum = 0.0
-        l2_sum = 0.0
+        cos_sim = cos_sum / 368.0
+        l2_sim = l2_sum / 368.0
+
         print("+++")
 
-        if cosine_similarity >=0.5:
+        if cos_sim >=0.79:
             print("1")
+            cos_sum = 0.0
+            l2_sum = 0.0
             return(1)
         else:
+            cos_sum = 0.0
+            l2_sum = 0.0
             return(0)
 
 
