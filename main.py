@@ -32,6 +32,15 @@ class MyApp(QWidget):
             "text-align: middle;"
             "color: #50fa7b;"
         )
+        self.small_label_style = (
+            "font-family: Arial;"
+            "padding: 5px;"
+            "margin: 5px;"
+            "font-size: 15px;"
+            "font-weight: bold;"
+            "text-align: middle;"
+            "color: #ffb86c;"
+        )
         self.btn_style = (
             "background-color: #44475a;"
             "border-radius: 15px;"
@@ -264,8 +273,70 @@ QProgressBar::chunk {
         self.add_event()
 
 
+    def removeuserUI(self):
+        ## make component
+        self.removeuserprogress1 = QProgressBar(self)
+        self.removeuserprogress1.setTextVisible(False)
+        self.removeuserprogress1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.removeuserbtn1 = QPushButton('&SCAN', self)
+        self.removeuserbtn1.setChecked(True)
+        self.removeuserbtn1.toggle()
+
+        ## set style
+        self.removeuserprogress1.setStyleSheet(self.progress_style)
+        self.removeuserbtn1.setStyleSheet(self.btn_style)
+
+        ## layout
+        self.removeuservbox = QVBoxLayout()
+        self.removeuservbox.addStretch(5)
+        self.removeuservbox.addWidget(self.removeuserprogress1)
+        self.removeuservbox.addStretch(1)
+        self.removeuservbox.addWidget(self.removeuserbtn1)
+        self.removeuservbox.addStretch(1)
+
+
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
+        self.vbox.addLayout(self.removeuservbox)
+        self.vbox.addStretch(10)
+
+        self.vbox_status = self.removeuservbox
+
+
+        ## event
+        self.removeuser_event()
+
     def aboutUI(self):
-        pass
+        ## make component
+        self.aboutlabel1 = QLabel("https://github.com/sungminna/FaceLocker", self)
+        self.aboutlabel1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.aboutlabel2 = QLabel('SUNGMIN NA', self)
+        self.aboutlabel2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        ## set style
+        self.aboutlabel1.setStyleSheet(self.small_label_style)
+        self.aboutlabel2.setStyleSheet(self.small_label_style)
+
+
+        ## layout
+        self.aboutvbox = QVBoxLayout()
+        self.aboutvbox.addStretch(5)
+        self.aboutvbox.addWidget(self.aboutlabel1)
+        self.aboutvbox.addStretch(1)
+        self.aboutvbox.addWidget(self.aboutlabel2)
+        self.aboutvbox.addStretch(5)
+
+        self.vbox.addLayout(self.home_btn_vbox)
+        self.vbox.addStretch(10)
+        self.vbox.addLayout(self.aboutvbox)
+        self.vbox.addStretch(10)
+
+        self.vbox_status = self.aboutvbox
+
+        ## event
+
+
 
 
     def password_UI(self, pass_df, table_name):
@@ -340,6 +411,10 @@ QProgressBar::chunk {
 
     def add_event(self):
         self.addbtn1.pressed.connect(lambda: self.add_btn_clicked())
+
+    def removeuser_event(self):
+        self.removeuserbtn1.pressed.connect(lambda: self.removeuser_btn_clicked())
+
 
     def password_event(self):
         self.passwordbtn1.pressed.connect(lambda: self.password_btn_clicked())
@@ -434,7 +509,7 @@ QProgressBar::chunk {
         if i==1:
             self.addUI()
         else:
-            pass
+            self.removeuserUI()
 
     def add_btn_clicked(self):
         self.addprogress1.setValue(10)
@@ -458,7 +533,32 @@ QProgressBar::chunk {
             table_name = "u_" + stime
             pass_df, table_name = self.pdb.get_password(table_name)
             self.password_UI(pass_df, table_name)
+        else:
+            # user exsists
+            pass
 
+
+    def removeuser_btn_clicked(self):
+        self.removeuserprogress1.setValue(10)
+        #detect = img_processing.find_face.FaceDetection(0, self.addprogress1)  #detect faces
+        detect = img_processing.find_face.FaceDetection(3, self.addprogress1)   #detect one face
+
+        #self.addprogress1.setValue(detect.cnt)
+        table_name = self.ddbb.get_user(detect.oneface)
+        self.removeuserprogress1.setValue(100)
+
+
+        if table_name != 0:
+            # remove user
+            print(table_name, "delete user")
+            self.ddbb.remove_user(table_name)
+            self.pdb.remove_user(table_name)
+
+            #self.delete_addUI()
+            self.delete_UI(self.removeuservbox)
+        else:
+            # no matching user to delete
+            pass
 
 
 

@@ -66,6 +66,12 @@ class Db:
         list_df.to_sql(table_name, self.conn, if_exists='replace')
         self.conn.commit()
 
+    def remove_user(self, table_name):
+        query = "DROP table " + table_name
+        self.cur.execute(query)
+        self.conn.commit()
+
+
     def get_user(self, logger_list):
         col_name = ['x', 'y', 'z']
         logger_df = pd.DataFrame(logger_list, columns=col_name)
@@ -105,6 +111,11 @@ class Passdb:
         text = "site text, id text, pass text"
 
         query = "CREATE TABLE IF NOT EXISTS " + table_name + "(" + text + ")"
+        self.cur.execute(query)
+        self.conn.commit()
+
+    def remove_user(self, table_name):
+        query = "DROP table " + table_name
         self.cur.execute(query)
         self.conn.commit()
 
