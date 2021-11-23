@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 
 
@@ -16,8 +15,6 @@ class Compare:
         db_piv = db_numpy[0]
         logger_piv = logger_numpy[0]
 
-
-
         for row in range(1, 368):   #exclude 0th array -> pivot
             db_row = db_numpy[row]
             logger_row = logger_numpy[row]
@@ -30,8 +27,6 @@ class Compare:
 
             l2norm_similarity = self.l2norm_sim(db_row, logger_row)
             l2_sum += l2norm_similarity
-
-
 
         print(cos_sum / 368.0)
         print(l2_sum / 368.0)
@@ -53,6 +48,7 @@ class Compare:
 
     def cos_sim(self, db_row, logger_row):
         return (np.dot(db_row, logger_row) / (np.linalg.norm(db_row) * np.linalg.norm(logger_row)))
+
 
     def l2norm_sim(self, db_row, logger_row):
         norm_diff = (np.linalg.norm(db_row) - np.linalg.norm(logger_row))

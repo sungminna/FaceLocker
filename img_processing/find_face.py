@@ -1,7 +1,6 @@
 import cv2
 import mediapipe as mp
-import pandas as pd
-import numpy as np
+
 
 
 class FaceDetection:
@@ -37,6 +36,7 @@ class FaceDetection:
             self.detect_both1()
         else:
             pass
+
 
     def detect_both(self):
         self.mpFaceDetection = mp.solutions.face_detection
@@ -101,7 +101,7 @@ class FaceDetection:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        ##
+        #########################################################
 
     def detect_both1(self):
         self.mpFaceDetection = mp.solutions.face_detection
@@ -191,8 +191,6 @@ class FaceDetection:
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-
-
 
 
     def detect_mesh(self):

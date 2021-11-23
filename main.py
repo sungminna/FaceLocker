@@ -1,10 +1,7 @@
 import sys
-from PyQt6.Qt import *
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-
-import pandas as pd
 
 import img_processing.find_face
 import database.db
@@ -98,6 +95,7 @@ QProgressBar::chunk {
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
 
+
     def home_button_UI(self):
         ## make component
         self.home_btn1 = QPushButton('&HOME', self)
@@ -112,10 +110,8 @@ QProgressBar::chunk {
         self.home_btn_vbox = QVBoxLayout()
         self.home_btn_vbox.addWidget(self.home_btn1)
 
-
         ## event
         self.home_button_event()
-
 
 
     ## UI
@@ -166,6 +162,7 @@ QProgressBar::chunk {
         # event
         self.front_event()
 
+
     def unlockUI(self):
         ## make component
         self.unlockprogress1 = QProgressBar(self)
@@ -193,9 +190,7 @@ QProgressBar::chunk {
         self.vbox.addLayout(self.unlockvbox)
         self.vbox.addStretch(10)
 
-
         self.vbox_status = self.unlockvbox
-
 
         ## event
         self.unlock_event()
@@ -222,19 +217,16 @@ QProgressBar::chunk {
         self.uservbox.addWidget(self.userbtn2)
         self.uservbox.addStretch(4)
 
-
-
         self.vbox.addLayout(self.home_btn_vbox)
         self.vbox.addStretch(10)
         self.vbox.addLayout(self.uservbox)
         self.vbox.addStretch(10)
 
-
         self.vbox_status = self.uservbox
-
 
         ## event
         self.user_event()
+
 
     def addUI(self):
         ## make component
@@ -250,7 +242,6 @@ QProgressBar::chunk {
         self.addprogress1.setStyleSheet(self.progress_style)
         self.addbtn1.setStyleSheet(self.btn_style)
 
-
         ## layout
         self.addvbox = QVBoxLayout()
         self.addvbox.addStretch(5)
@@ -259,15 +250,12 @@ QProgressBar::chunk {
         self.addvbox.addWidget(self.addbtn1)
         self.addvbox.addStretch(1)
 
-
         self.vbox.addLayout(self.home_btn_vbox)
         self.vbox.addStretch(10)
         self.vbox.addLayout(self.addvbox)
         self.vbox.addStretch(10)
 
-
         self.vbox_status = self.addvbox
-
 
         ## event
         self.add_event()
@@ -295,7 +283,6 @@ QProgressBar::chunk {
         self.removeuservbox.addWidget(self.removeuserbtn1)
         self.removeuservbox.addStretch(1)
 
-
         self.vbox.addLayout(self.home_btn_vbox)
         self.vbox.addStretch(10)
         self.vbox.addLayout(self.removeuservbox)
@@ -303,9 +290,9 @@ QProgressBar::chunk {
 
         self.vbox_status = self.removeuservbox
 
-
         ## event
         self.removeuser_event()
+
 
     def aboutUI(self):
         ## make component
@@ -317,7 +304,6 @@ QProgressBar::chunk {
         ## set style
         self.aboutlabel1.setStyleSheet(self.small_label_style)
         self.aboutlabel2.setStyleSheet(self.small_label_style)
-
 
         ## layout
         self.aboutvbox = QVBoxLayout()
@@ -336,15 +322,11 @@ QProgressBar::chunk {
 
         ## event
 
-
-
-
     def password_UI(self, pass_df, table_name):
         # data config
         self.table_name = table_name
         self.passwordtable_row = 5
         df_rowcount = pass_df.shape[1]
-
 
         ## make component
         self.passwordtable = QTableWidget(self)
@@ -381,20 +363,16 @@ QProgressBar::chunk {
         self.vbox.addLayout(self.passwordvbox)
         self.vbox.addStretch(10)
 
-
         self.vbox_status = self.passwordvbox
-
 
         ## event
         self.password_event()
-
 
 
     ## event listener
 
     def home_button_event(self):
         self.home_btn1.pressed.connect(lambda: self.home_btn_clicked())
-
 
     def front_event(self):
         self.frontbtn1.pressed.connect(lambda: self.front_btn_clicked(1))
@@ -403,7 +381,6 @@ QProgressBar::chunk {
 
     def unlock_event(self):
         self.unlockbtn1.pressed.connect(lambda: self.unlock_btn_clicked())
-
 
     def user_event(self):
         self.userbtn1.pressed.connect(lambda: self.user_btn_clicked(1))
@@ -420,26 +397,18 @@ QProgressBar::chunk {
         self.passwordbtn1.pressed.connect(lambda: self.password_btn_clicked())
 
 
-
     ## delete UI
 
     def delete_UI(self, vbox):
-
-
         # delete widget in vbox that are in self.vbox
         for i in reversed(range(vbox.count())):
             if (vbox.itemAt(i).widget() != None):
                 vbox.itemAt(i).widget().deleteLater()
 
-        #for i in reversed(range(vbox.count())):
-        #    if (vbox.itemAt(i).layout()) != None:
-        #        vbox.removeItem(vbox.itemAt(i).layout())
-
         #delete self.vbox widget
         for i in reversed(range(self.vbox.count())):
             if (self.vbox.itemAt(i).widget() != None):
                 self.vbox.itemAt(i).widget().deleteLater()
-
 
         # delete self.vbox layout
         for i in reversed(range(self.vbox.count())):
@@ -453,20 +422,8 @@ QProgressBar::chunk {
         #delete all component and
         print(self.vbox_status)
         self.delete_UI(self.vbox_status)
-        #for i in reversed(range(self.vbox_status.count())):
-        #    if (self.vbox_status.itemAt(i).widget()) != None:
-        #        self.vbox_status.itemAt(i).widget().deleteLater()
-
-        #for i in reversed(range(self.vbox.count())):
-        #    if (self.vbox.itemAt(i).layout()) != None:
-        #        self.vbox.itemAt(i).layout().deleteLater()
-
-
 
         self.frontUI()
-
-
-        #self.vbox.removeItem(self.unlockvbox)
 
 
     def front_btn_clicked(self, i):
@@ -478,6 +435,7 @@ QProgressBar::chunk {
             self.userUI()
         else:
             self.aboutUI()
+
 
     def unlock_btn_clicked(self):
         self.unlockprogress1.setValue(10)
@@ -498,10 +456,7 @@ QProgressBar::chunk {
             self.unlockprogress1.setValue(0)
 
 
-
         # opencv unlock
-
-
 
     def user_btn_clicked(self, i):
         #self.delete_userUI()
@@ -510,6 +465,7 @@ QProgressBar::chunk {
             self.addUI()
         else:
             self.removeuserUI()
+
 
     def add_btn_clicked(self):
         self.addprogress1.setValue(10)
@@ -561,9 +517,6 @@ QProgressBar::chunk {
             self.removeuserprogress1.setValue(0)
 
 
-
-
-
     def password_btn_clicked(self):
         # save(update) password data
         password_list = list()
@@ -577,6 +530,7 @@ QProgressBar::chunk {
 
             password_list.append(temp_list)
         self.pdb.update_password(password_list, self.table_name)
+
 
 
 

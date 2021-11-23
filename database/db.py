@@ -12,7 +12,6 @@ class Db:
         self.cur = self.conn.cursor()
 
 
-
     def save_user_multi(self, table_name, data):    #not in use
         table_name = "u_" + table_name
         text = str()
@@ -51,6 +50,7 @@ class Db:
         self.cur.executemany(query, face_tup)
         self.conn.commit()
 
+
     def save_user1(self, id, data):
         table_name = "u_" + id
         text = "x real, y real, z real"
@@ -65,6 +65,7 @@ class Db:
         list_df = pd.DataFrame(data, columns=col_name)
         list_df.to_sql(table_name, self.conn, if_exists='replace')
         self.conn.commit()
+
 
     def remove_user(self, table_name):
         query = "DROP table " + table_name
@@ -107,6 +108,7 @@ class Passdb:
         self.conn = sqlite3.connect("password.db")
         self.cur = self.conn.cursor()
 
+
     def add_user(self, id):
         table_name = "u_" + id
 
@@ -115,6 +117,7 @@ class Passdb:
         query = "CREATE TABLE IF NOT EXISTS " + table_name + "(" + text + ")"
         self.cur.execute(query)
         self.conn.commit()
+
 
     def remove_user(self, table_name):
         query = "DROP table " + table_name
@@ -130,6 +133,7 @@ class Passdb:
         col_name = ['site', 'id', 'password']
         pass_df = pd.DataFrame(data=pass_data, columns=col_name)
         return(pass_df, table_name)
+
 
     def update_password(self, pass_list, table_name):
         col_name = ['site', 'id', 'password']
