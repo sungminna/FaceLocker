@@ -94,7 +94,9 @@ class Db:
                 print(table_name)
                 return(table_name)
             else:
-                return(0)
+                pass
+
+        return(0)
 
 
 

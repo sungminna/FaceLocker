@@ -40,7 +40,7 @@ class Compare:
 
         print("+++")
 
-        if cos_sim >=0.79:
+        if cos_sim >=0.995:
             print("1")
             cos_sum = 0.0
             l2_sum = 0.0

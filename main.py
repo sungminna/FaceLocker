@@ -495,7 +495,7 @@ QProgressBar::chunk {
             # show
         else:
             # no matching faces
-            pass
+            self.unlockprogress1.setValue(0)
 
 
 
@@ -541,7 +541,7 @@ QProgressBar::chunk {
     def removeuser_btn_clicked(self):
         self.removeuserprogress1.setValue(10)
         #detect = img_processing.find_face.FaceDetection(0, self.addprogress1)  #detect faces
-        detect = img_processing.find_face.FaceDetection(3, self.addprogress1)   #detect one face
+        detect = img_processing.find_face.FaceDetection(3, self.removeuserprogress1)   #detect one face
 
         #self.addprogress1.setValue(detect.cnt)
         table_name = self.ddbb.get_user(detect.oneface)
@@ -558,7 +558,7 @@ QProgressBar::chunk {
             self.delete_UI(self.removeuservbox)
         else:
             # no matching user to delete
-            pass
+            self.removeuserprogress1.setValue(0)
 
 
 
